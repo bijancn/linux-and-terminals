@@ -26,7 +26,7 @@ Session overview
 6. Bash scripting
 7. Makefiles
 8. Git
-9. DESY IT (IT person name)
+9. DESY IT (Sven Sternberger)
 10. Bonus: Tips and Tricks for Customization
 Note:
 - Say that I will talk a bit and then we dive into excercises
@@ -285,14 +285,13 @@ What else can the shell do?
 <p>
   Time to play around!
 </p><!-- .element: class="fragment" -->
-
+<br>
 <div>
   ```bash
   echo 'Hello World!'
   # Hello World!
   ```
 </div><!-- .element: class="fragment" -->
-<br>
 <div>
   ```bash
   me=Bijan
@@ -300,7 +299,6 @@ What else can the shell do?
   # Bijan
   ```
 </div><!-- .element: class="fragment" -->
-<br>
 <div>
   ```bash
   echo "Hello $me!"
@@ -325,7 +323,6 @@ the <mark>first word</mark> of a command
   alias
   ```
 </div><!-- .element: class="fragment" -->
-
 <div>
   So aliases can still take arguments
 </div><!-- .element: class="fragment" -->
@@ -343,7 +340,17 @@ Note:
 ===
 Aliases
 ------------------------------------------------------------------------
+But aliases can not be used as argument
+<div>
+  ```bash
+  alias h=hello
+  e h
+  # h
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
 Aliases are not recursively expanded
+</div><!-- .element: class="fragment" -->
 <div>
   ```bash
   ls
@@ -353,16 +360,26 @@ Aliases are not recursively expanded
   # ...
   ```
 </div><!-- .element: class="fragment" -->
-<br>
 
-<div>
+===
 Sourcing
 ------------------------------------------------------------------------
-Read and execute commands from `filename` argument
+Read and execute commands from `filename` argument given to `source`
+<div>
   ```bash
   source ~/.bashrc
   . ~/.bashrc
   ```
+</div><!-- .element: class="fragment" -->
+<div>
+You can source any file. The Intel compiler can be loaded at DESY e.g. with
+  ```bash
+  source /opt/intel/bin/compilervars.sh intel64
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
+  The `.bashrc` is somewhat special as it is *usually* loaded by default
+  (if not -> modify `.bash_profile` or `.profile`)
 </div><!-- .element: class="fragment" -->
 
 ===
@@ -394,18 +411,99 @@ Linux file system
 ------------------------------------------------------------------------
 <img src="images/directorystructure.png" width="100%">
 
----
-What is AFS?
+
+===
+Creating files and directories
+------------------------------------------------------------------------
+A file is created by `touch`ing it
+<div>
+  ```bash
+  ls myfile
+  # ls: cannot access 'myfile': No such file or directory
+  touch myfile
+  ls myfile
+  # myfile
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
+A folder is created my `m`a`k`e `dir`
+</div><!-- .element: class="fragment" -->
+<div>
+  ```bash
+  ls myfolder
+  # ls: cannot access 'myfolder': No such file or directory
+  mkdir myfolder
+  ls myfolder
+  # myfolder
+  ```
+</div><!-- .element: class="fragment" -->
+
+===
+Copy contents
 ------------------------------------------------------------------------
 
+
+===
+Showing files
+------------------------------------------------------------------------
+We can `l`i`s`t the directory contents
+<div>
+  ```bash
+  ls
+  ls -l
+  ls -al
+  ls -S
+  ls -Sr
+  ls -t
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
+  Note that `-a` does not ignore entries starting with `.` and that short
+  options can be concatenated (`-al` = `-a -l`)
+</div><!-- .element: class="fragment" -->
+<div>
+  Check all options with `man ls` or `ls --help`.
+</div><!-- .element: class="fragment" -->
+
+===
+Links
+------------------------------------------------------------------------
+Links are like a pointer from one file to another
+
+===
+Folders can be special
+------------------------------------------------------------------------
+E.g.\ your home folder `~` points at DESY actually to (on SL computers,
+on Ubuntu check `~/afs`)?
+<div>
+  ```bash
+  echo ~
+  # /afs/desy.de/user/b/bcho
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
+The <mark>Andrew File System (AFS)</mark> is a distributed file system
+that allows to use the folder on all clients like a physical folder
+</div><!-- .element: class="fragment" -->
+<div>
+Has some issues especially under Ubuntu (`git`, `svn` or `latex` not working
+correctly in it). Will eventually be replaced. You can also use
+`DESYcloud` to share files. More info in <mark>DESY talk</mark>
+</div><!-- .element: class="fragment" -->
+
+===
+More special folders
+------------------------------------------------------------------------
+
+
 ---
-- environment variables
+- environment variables https://en.wikipedia.org/wiki/Environment_variable
+- `history`
 - what is PATH and LD_LIBRARY_PATH
-- what is a .bashrc? how to source
-- how to configure an alias
 - access rights
   - how to make a script executable
 - usage of editor: vim? nano?
+- what $SHELL and what $TERM are we in?
 - bonus: what is TERM? Set TERM=Dumb
 - common shortcuts
   - Alt+.
