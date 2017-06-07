@@ -372,7 +372,8 @@ Read and execute commands from `filename` argument given to `source`
   ```
 </div><!-- .element: class="fragment" -->
 <div>
-You can source any file. The Intel compiler can be loaded at DESY e.g. with
+You can source any file. The Intel compiler can e.g.<br>
+be loaded at DESY with
   ```bash
   source /opt/intel/bin/compilervars.sh intel64
   ```
@@ -439,9 +440,34 @@ A folder is created my `m`a`k`e `dir`
 </div><!-- .element: class="fragment" -->
 
 ===
-Copy contents
+Copy and move
 ------------------------------------------------------------------------
+We always `c`o`p`y from `source` to a `destination`
+<div>
+  ```bash
+  cp foo.txt bar.txt
+  cp foo.txt bar.txt archive
+  cp foo.txt bar.txt archive/
+  cp archive2 archive
+  cp archive2/* archive
+  ```
+</div><!-- .element: class="fragment" -->
 
+<div>
+  Same goes for `m`o`v`ing files and directories
+</div><!-- .element: class="fragment" -->
+<div>
+  ```bash
+  mv archive/bar.txt archive2
+  mv archive/archive2 archive2
+  mv archive/archive2 archive2 # !!!
+  mv archive/archive2 .        # !!!
+  ```
+</div><!-- .element: class="fragment" -->
+Note:
+- Moving on the same disk is basically instantly (not physically moved,
+  just adressbook adjusted)
+- Tipp: `alias mv='mv -v'`
 
 ===
 Showing files
@@ -469,6 +495,49 @@ We can `l`i`s`t the directory contents
 Links
 ------------------------------------------------------------------------
 Links are like a pointer from one file to another
+
+
+===
+Access rights
+------------------------------------------------------------------------
+We already saw that `ls -l` informs us not only about
+<mark>owner</mark>, <mark>group</mark>, <mark>size</mark>
+and <mark>modification date</mark> but also about <mark>rights</mark>
+<div id="left-big" style="font-size:smaller">
+  ```bash
+  ls -l
+  # drwxrwxr-x 2 bijancn bijancn 4096 Jun  2 14:13 archive
+  # drwxrwxr-x 3 bijancn bijancn 4096 Jun  2 14:13 archive2
+  # -rw-rw-r-- 1 bijancn bijancn    0 Jun  2 14:01 bar.txt
+  # -rw-rw-r-- 1 bijancn bijancn    0 Jun  2 14:01 foo.txt
+  ```
+</div>
+<div id="right-small">
+<img src="images/permissions_diagram.gif" width="100%">
+</div>
+- `x` for files means <mark>executable</mark>, for folders
+    <mark>enterable</mark>
+- `r` for files means <mark>readable</mark>, for folders <mark>listable</mark>
+- `w` for files allows to <mark>change</mark>, for folders <mark>to
+  change files within</mark>
+
+===
+Changing access rights
+------------------------------------------------------------------------
+We can `ch`ange the `mod`e bits for the `u`ser, `g`roup and `o`thers
+<div>
+  ```bash
+  chmod +x archive
+  chmod -x archive
+  chmod ug+x archive
+  chmod 755 archive
+  chmod 644 foo.txt
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
+The numbers are derived by adding up bits <br>
+(`4`:read, `2`:write, `1`:execute) for `u`ser, `g`roup and `o`thers
+</div><!-- .element: class="fragment" -->
 
 ===
 Folders can be special
