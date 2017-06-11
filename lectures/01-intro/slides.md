@@ -18,18 +18,16 @@ Note:
 ---
 Session overview
 ------------------------------------------------------------------------
-1. <mark>Intro, Linux basics</mark>
-2. File management in the terminal
-3. Combine simple commands
-4. One liners (going beyond pipes)
+1. <mark>Intro, Linux basics and file management</mark>
+2. More commands and piping
+3. One liners (going beyond pipes)
+4. Bash scripting
 5. Regular Expressions
-6. Bash scripting
-7. Makefiles
-8. Git
-9. DESY IT (Sven Sternberger)
-10. Bonus: Tips and Tricks for Customization
+6. Makefiles
+7. Git
+8. DESY IT (Sven Sternberger)
 Note:
-- Say that I will talk a bit and then we dive into excercises
+- Lectures will be hands on, so we try the stuff we see directly
 - Everyone noted at least basic programming skills
 
 ---
@@ -389,7 +387,7 @@ Some basic directory movements
 We can `c`hange `d`irectory with `cd`
 <div>
   ```bash
-  cd www
+  cd ~/www
   ls
   ```
 </div><!-- .element: class="fragment" -->
@@ -407,10 +405,19 @@ Our `p`resent `w`orking `d`irectory is printed by <br>
   ```
 </div><!-- .element: class="fragment" -->
 
+===
+Some important shortcuts
+------------------------------------------------------------------------
+- Use `<TAB>` for expanding commands, filenames, etc
+- Go through command history with `<ARROW-UP>` and `<ARROW-DOWN>`
+- `!!` to repeat last command
+- `<ALT>+<.>` to repeat last argument of previous command (can be
+    repeated)
+
 ---
 Linux file system
 ------------------------------------------------------------------------
-<img src="images/directorystructure.png" width="100%">
+<img src="images/filesystem-structure.png" width="40%">
 
 
 ===
@@ -470,6 +477,18 @@ Note:
 - Tipp: `alias mv='mv -v'`
 
 ===
+Removing
+------------------------------------------------------------------------
+We can `r`e`m`ove files and folders
+<div>
+  ```bash
+  rm foo
+  rm -r foofolder
+  rm foo1 foo2 foo3
+  ```
+</div><!-- .element: class="fragment" -->
+
+===
 Showing files
 ------------------------------------------------------------------------
 We can `l`i`s`t the directory contents
@@ -492,10 +511,57 @@ We can `l`i`s`t the directory contents
 </div><!-- .element: class="fragment" -->
 
 ===
+Showing content
+------------------------------------------------------------------------
+`cat` concatenates files and prints them on the terminal
+<div>
+  ```bash
+  cat /usr/share/dict/words   # or
+  cat /usr/dict/words
+  ```
+</div><!-- .element: class="fragment" -->
+
+---
 Links
 ------------------------------------------------------------------------
-Links are like a pointer from one file to another
+`l`i`n`ks are like a pointer from one file/directory to another
 
+A <mark>hard</mark> link is an entry in the file system just like a file
+
+Problem with hard links is that they cannot work across file systems
+
+<div>
+  <mark>Soft</mark> links are thus preferred for almost everything
+
+  It points to a <mark>relative</mark> or absolute path
+
+  If you delete the source, the link remains as a dead link
+</div><!-- .element: class="fragment" -->
+
+
+===
+Setting links
+------------------------------------------------------------------------
+Like `cp` and `mv`, we `ln` from `SOURCE` to `TARGET`
+<div>
+  ```bash
+  ln -s foo superfoo
+  # lrwxrwxrwx 1 bijancn bijancn    3 Jun 10 13:49 superfoo -> foo
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
+Can be useful to e.g. keep configuration files in a synched folder
+  ```bash
+  ls -la ~/.bashrc
+  lrwxrwxrwx 1 bijancn bijancn 35 Jan 31 08:51 /home/bijancn/.bashrc -> /home/bijancn/bcn_scripts/.bashrc
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
+Be careful with <mark>relative links</mark>
+  ```bash
+   ln -s ../foo folder/superfoo
+  ```
+</div><!-- .element: class="fragment" -->
 
 ===
 Access rights
@@ -539,6 +605,15 @@ The numbers are derived by adding up bits <br>
 (`4`:read, `2`:write, `1`:execute) for `u`ser, `g`roup and `o`thers
 </div><!-- .element: class="fragment" -->
 
+<div>
+Any file that has the e`x`ecutable bit can be executed
+  ```bash
+  echo 'ls' >> super-lister
+  chmod +x super-lister
+  ./super-lister
+  ```
+</div><!-- .element: class="fragment" -->
+
 ===
 Folders can be special
 ------------------------------------------------------------------------
@@ -563,21 +638,141 @@ correctly in it). Will eventually be replaced. You can also use
 ===
 More special folders
 ------------------------------------------------------------------------
+`/media` is usually used for mounting USB sticks, external hard drives
+or CDs/DVDs
+
+`/proc` is not really a folder on disk but <br>
+an <mark>interface</mark> to the the kernel
+
+<div>
+It contains information about the <mark>hardware</mark> and the running
+<mark>processes</mark>
+
+  ```bash
+  grep processor /proc/cpuinfo
+  cat /proc/partitions
+  cat /proc/meminfo
+  ```
+</div><!-- .element: class="fragment" -->
 
 
 ---
-- environment variables https://en.wikipedia.org/wiki/Environment_variable
-- `history`
-- what is PATH and LD_LIBRARY_PATH
-- access rights
-  - how to make a script executable
-- usage of editor: vim? nano?
-- what $SHELL and what $TERM are we in?
-- bonus: what is TERM? Set TERM=Dumb
-- common shortcuts
-  - Alt+.
-  - Up Down
-  - Tab
+Environment variables
+------------------------------------------------------------------------
+We played with the `PS1` environment variable. Environment variables
+steer many behaviors of the shell
+
+<div>
+In general they are set with
+  ```bash
+  export VARIABLE=value   # an environment variable
+  VARIABLE=value          # only a value that lives in the shell
+  ```
+</div><!-- .element: class="fragment" -->
+
+<div>
+They can be accessed by prefixing a `$`
+  ```bash
+  echo $VARIABLE
+  ```
+</div><!-- .element: class="fragment" -->
+
+
+===
+Environment variables
+------------------------------------------------------------------------
+You can overwrite a variable with nothing
+<div>
+  ```bash
+  export VARIABLE=
+  ```
+</div><!-- .element: class="fragment" -->
+
+<div>
+Or `unset` it completely
+  ```bash
+  unset VARIABLE
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
+  Check the difference with `printenv`!
+
+  Do unexported but set variables enter `printenv`s listing?<br>
+  (relevant for configuration of some programs, e.g. is `$CC` set?)
+</div><!-- .element: class="fragment" -->
+
+===
+The PATH to success
+------------------------------------------------------------------------
+Two particularily important variables are <br>
+`$PATH` and `$LD_LIBRARY_PATH`
+
+A shell will try to execute a command if is found <br>
+in `$PATH` or the system paths
+
+Multiple paths are combined with `:`
+
+First command found takes priority
+<div>
+  ```bash
+  export PATH=.:$PATH
+  file-lister
+  echo 'echo "ls is for weaklings"' >> ls
+  ls
+  ```
+</div><!-- .element: class="fragment" -->
+
+===
+PATHs for version management
+------------------------------------------------------------------------
+As `$PATH` is so easily changed, you can have multiple versions of
+programs "installed" but only load them as needed
+
+Used in various package managers (e.g. `nvm` for `nodejs`, `rvm` for
+`ruby`, `pyenv` for `python`)
+
+<div>
+  Compiled programs usually need to have `$LD_LIBRARY_PATH` set
+  accordingly
+  
+  When you install a linux program to a `--prefix`, it will set up a `bin`
+  folder for executables (add to `$PATH`) and possibly `lib` and `lib64`
+  (add to `$LD_LIBRARY_PATH`) or more
+</div><!-- .element: class="fragment" -->
+
+
+===
+Exercise PATHing
+------------------------------------------------------------------------
+- Create two folders `foo` and `foo2`
+- Put in each folder an executable file `script` that <br>
+  echoes `foo` and `foo2`, respectively
+- Go back and adapt your `$PATH` so that <br>
+  you can execute `script` in `foo`
+- Change `$PATH` to execute the other `script`
+
+===
+Other possibly important variables
+------------------------------------------------------------------------
+There are some paths concerning your programming language like
+`PYTHONPATH` (make python files importable), `C_INCLUDE_PATH` (for
+header files)
+
+<div>
+  Others drive configuration like `CC` (`C` compiler), <br>
+  `CXX` (`C++` compiler), `CFLAGS` (flags for `C` compiler), <br>
+  `CXXFLAGS` (flags for `C++` compiler), ...
+</div><!-- .element: class="fragment" -->
+
+<div>
+  `$TERM` informs your shell about the capabilities of your terminal (like
+  `xterm-256color`)
+</div><!-- .element: class="fragment" -->
 
 ---
-<img src="images/i-find-your-lack-of-tests-disturbing.jpg" width="50%">
+Summary
+------------------------------------------------------------------------
+- Linux provides a powerful shell
+- Basic shell commands and file movements
+- Basics of Linux file system
+- Handling of PATH and other variables
