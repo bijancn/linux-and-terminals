@@ -290,7 +290,7 @@ Some nice options for `diff`ing
 
 <div>
   `-w` ignores all white space differences
-  
+
   `-B` ignores blank lines
 </div><!-- .element: class="fragment" -->
 
@@ -354,7 +354,107 @@ More grep options
 ===
 Finding files and directories
 ------------------------------------------------------------------------
+`find` is a very powerful and complex command <br>
+to search for files or directories
 
+<div>
+  You can search by `name`
+  ```bash
+  find . -name '*foo*'
+  find . -name '*.txt'
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
+  Or by `m`odification `time` (in days)
+  ```bash
+  find . -mtime 1
+  ```
+</div><!-- .element: class="fragment" -->
+
+===
+Finding files
+------------------------------------------------------------------------
+  You can also search by `type`
+  ```bash
+  find . -type f
+  find . -type d
+  ```
+<div>
+  Or `size` (in days)
+  ```bash
+  find . -type f -size +20000k
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
+  And `exec`ute a command on it
+  (`+` and `;` can terminate a command but `+` does less invocations)
+  ```bash
+  find . -type f -exec chmod 644 {} +
+  find . -type d -exec chmod 755 {} +
+  ```
+</div><!-- .element: class="fragment" -->
+
+===
+More finding examples
+------------------------------------------------------------------------
+Remove empty directories
+<div>
+  ```bash
+    find -type d -empty -exec rm {} +
+  ```
+</div><!-- .element: class="fragment" -->
+
+<div>
+List mp3 files in music directory older than a year and (`-a`) <br>
+larger than 10MB
+</div><!-- .element: class="fragment" -->
+<div>
+  ```bash
+  find music -name '*.mp3' -mtime +365 -a -size +10M -ls
+  ```
+  (There is also `-o` for `or`)
+</div><!-- .element: class="fragment" -->
+
+---
+Tarring
+------------------------------------------------------------------------
+`tar` is the standard tool for bundling and compressing on Linux
+
+You have to tell him first what he should do,<br>
+then you add the files
+
+<div>
+  `c`reate an archive `v`erbosively with a given `f`ilename
+  ```bash
+  tar -cvf archive.tar *txt
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
+  e`x`traction works the same way
+  ```bash
+  tar -xvf archive.tar
+  ```
+</div><!-- .element: class="fragment" -->
+
+===
+Adding compression
+------------------------------------------------------------------------
+You can add an compression to decrease the archive size
+
+`j` for `bzip2` and `z` for `gzip`
+
+`gzip` is very fast and on the same order of magnitude <br>
+as the best compression rates
+
+<div>
+  ```bash
+  tar -czvf archive.tar.gz *txt
+  tar -xzvf archive.tar.gz
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
+  <img src="images/tar_2x.png" width="60%">
+</div><!-- .element: class="fragment" -->
 
 ---
 Monitoring ourselves
@@ -370,8 +470,8 @@ We can use this to count our processes
 </div><!-- .element: class="fragment" -->
 
 <div>
-Similarily `top -b -n1` gives a snapshot. We often only care about the
-head
+Similarily `top -b -n1` gives a snapshot.<br>
+We often only care about the head
 </div><!-- .element: class="fragment" -->
 <div>
   ```bash
@@ -379,24 +479,29 @@ head
   ```
 </div><!-- .element: class="fragment" -->
 
+<div>
+  Of course, you can use `top` (or better `htop`) directly
+</div><!-- .element: class="fragment" -->
 
----
+===
 Working With Processes
 ------------------------------------------------------------------------
-`<Ctrl>+<C>`: Interrupt (kill) the current foreground process running in
-in the terminal. This sends the SIGINT signal to the process, which is
-technically just a request—most processes will honor it, but some may
-ignore it.
+`<Ctrl>+<C>`: <mark>Interrupt</mark> (kill) current foreground process.
+This sends the `SIGINT` signal to the process.
+Most processes will honor the request but some may ignore it.
 
-`<Ctrl>+<Z>`: Suspend the current foreground process running in bash.
-This sends the SIGTSTP signal to the process. To return the process to
-the foreground later, use the fg process_name command.
+<div>
+  `<Ctrl>+<Z>`: <mark>Suspend</mark> current foreground process.
+  This sends the `SIGTSTP` signal to the process.
+</div><!-- .element: class="fragment" -->
 
-`<Ctrl>+<D>`: Close the bash shell. This sends an EOF (End-of-file)
-marker to bash, and bash exits when it receives this marker. This is
-similar to running the exit command.
+<div>
+  `<Ctrl>+<D>`: <mark>Close</mark> the bash shell.
+  This sends an EOF (End-of-file)  marker to bash.
+  bash exits when it receives this marker.
+</div><!-- .element: class="fragment" -->
 
----
+===
 Chaining commands
 ------------------------------------------------------------------------
 There are multiple ways to combine commands
@@ -411,8 +516,79 @@ There are multiple ways to combine commands
 `command1` is executed in background and `command2` is executed in
 foreground at the same time <br>
 
+===
+Wait --- what background?
+------------------------------------------------------------------------
+`jobs` lists the jobs running in the background, <br>
+giving the job and process number
 
+<div>
+  ```bash
+  ping google.de > /dev/null &
+  # [1] 6466
+  jobs
+  ```
+</div><!-- .element: class="fragment" -->
+
+<div>
+  You can send signals with `kill`
+
+  The default signal is `TERM`. <br>
+  You can also send `HUP`, `INT`, `KILL`, `STOP` or `CONT`
+  ```bash
+  kill %1 #or
+  kill %  #or
+  kill 6466  #or
+  ```
+</div><!-- .element: class="fragment" -->
+
+===
+Send to foreground or background
+------------------------------------------------------------------------
+The `bg` or `fg` command allow you to send a job to the background or
+foreground, respectively
+
+<div>
+  ```bash
+  ping google.de  > /dev/null &
+  [1] 7150
+  fg
+  [1]  + 7150 running    ping google.de > /dev/null
+  
+  ^Z
+  [1]  + 7150 suspended  ping google.de > /dev/null
+  fg
+  [1]  + 7150 continued  ping google.de > /dev/null
+  ^Z
+  [1]  + 7150 suspended  ping google.de > /dev/null
+  bg
+  [1]  + 7150 continued  ping google.de > /dev/null
+  jobs
+  [1]  + running    ping google.de > /dev/null
+  ```
+</div><!-- .element: class="fragment" -->
+
+
+===
+kill them all
+------------------------------------------------------------------------
+`killall NAME` is quite handy to kill processes by <mark>name</mark>
+
+`killall` understands the same signals as `kill`
+
+`killall` can be even given regular expressions (cf. later) <br>
+with `-r`
+
+<div>
+  ```bash
+  killall -9 ping
+  # [1]  + 7150 killed     ping google.de > /dev/null
+  ```
+</div><!-- .element: class="fragment" -->
 ---
 Summary
 ------------------------------------------------------------------------
-
+- Streams and redirection
+- More commandline tools
+- Building small programs by piping
+- Working with and controlling processes
