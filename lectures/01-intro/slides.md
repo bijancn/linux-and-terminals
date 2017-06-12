@@ -20,12 +20,11 @@ Session overview
 ------------------------------------------------------------------------
 1. <mark>Intro, Linux basics and file management</mark>
 2. More commands and piping
-3. One liners (going beyond pipes)
-4. Bash scripting
-5. Regular Expressions
-6. Makefiles
-7. Git
-8. DESY IT (Sven Sternberger)
+3. Bash scripting
+4. Regular Expressions
+5. Makefiles
+6. Git
+7. DESY IT (Sven Sternberger)
 Note:
 - Lectures will be hands on, so we try the stuff we see directly
 - Everyone noted at least basic programming skills
@@ -449,26 +448,26 @@ A folder is created my `m`a`k`e `dir`
 ===
 Copy and move
 ------------------------------------------------------------------------
-We always `c`o`p`y from `source` to a `destination`
+We always `c`o`p`y from `source` to a `destination` (`r`ecursively if it
+is a folder)
 <div>
   ```bash
   cp foo.txt bar.txt
   cp foo.txt bar.txt archive
   cp foo.txt bar.txt archive/
-  cp archive2 archive
+  cp -r archive2 archive
   cp archive2/* archive
   ```
 </div><!-- .element: class="fragment" -->
 
 <div>
-  Same goes for `m`o`v`ing files and directories
+  `m`o`v`ing files and directories is no recursive action
 </div><!-- .element: class="fragment" -->
 <div>
   ```bash
   mv archive/bar.txt archive2
   mv archive/archive2 archive2
-  mv archive/archive2 archive2 # !!!
-  mv archive/archive2 .        # !!!
+  mv archive2/archive2 .        # !!!
   ```
 </div><!-- .element: class="fragment" -->
 Note:
@@ -479,7 +478,7 @@ Note:
 ===
 Removing
 ------------------------------------------------------------------------
-We can `r`e`m`ove files and folders
+We can `r`e`m`ove files and folders (`r`ecursively if needed)
 <div>
   ```bash
   rm foo
@@ -519,6 +518,15 @@ Showing content
   cat /usr/share/dict/words   # or
   cat /usr/dict/words
   ```
+  Nice start point to edit this stream (cf. later)
+</div><!-- .element: class="fragment" -->
+
+<div>
+  For reading `less` is more convenient
+  ```bash
+  less /usr/share/dict/words
+  ```
+  Navigate with `j/k,gg,G`, help is under `h`, quit with `q`
 </div><!-- .element: class="fragment" -->
 
 ---
@@ -550,7 +558,8 @@ Like `cp` and `mv`, we `ln` from `SOURCE` to `TARGET`
   ```
 </div><!-- .element: class="fragment" -->
 <div>
-Can be useful to e.g. keep configuration files in a synched folder
+Can be useful to e.g. keep configuration files<br>
+in a synched folder
   ```bash
   ls -la ~/.bashrc
   lrwxrwxrwx 1 bijancn bijancn 35 Jan 31 08:51 /home/bijancn/.bashrc -> /home/bijancn/bcn_scripts/.bashrc
@@ -728,18 +737,39 @@ PATHs for version management
 As `$PATH` is so easily changed, you can have multiple versions of
 programs "installed" but only load them as needed
 
-Used in various package managers (e.g. `nvm` for `nodejs`, `rvm` for
-`ruby`, `pyenv` for `python`)
+Used in various language version managers (e.g. `nvm` for `nodejs`,
+`rvm` for `ruby`, `pyenv` for `python`)
 
 <div>
-  Compiled programs usually need to have `$LD_LIBRARY_PATH` set
-  accordingly
+  If you install a library (will be used for compiling other programs) 
+  `$LD_LIBRARY_PATH` has to be set accordingly
   
   When you install a linux program to a `--prefix`, it will set up a `bin`
   folder for executables (add to `$PATH`) and possibly `lib` and `lib64`
   (add to `$LD_LIBRARY_PATH`) or more
 </div><!-- .element: class="fragment" -->
 
+===
+PATHs for full power
+------------------------------------------------------------------------
+When you work on a cluster or desktop machine, where IT won't give you
+root, don't think you have to beg them for every software you want to
+use
+
+<div>
+  Setup a default install path (e.g. `~/install`) and <br>
+  install all your standard software there <br>
+  (via `--prefix=$HOME/install`)
+</div><!-- .element: class="fragment" -->
+
+<div>
+  Source it with your `.bashrc`, by adding
+  ```bash
+  export PATH=$HOME/install/bin:$PATH
+  export LD_LIBRARY_PATH=$HOME/install/lib:$PATH
+  export LD_LIBRARY_PATH=$HOME/install/lib64:$PATH
+  ```
+</div><!-- .element: class="fragment" -->
 
 ===
 Exercise PATHing
@@ -748,7 +778,7 @@ Exercise PATHing
 - Put in each folder an executable file `script` that <br>
   echoes `foo` and `foo2`, respectively
 - Go back and adapt your `$PATH` so that <br>
-  you can execute `script` in `foo`
+  you can execute `script` and it echoes `foo`
 - Change `$PATH` to execute the other `script`
 
 ===

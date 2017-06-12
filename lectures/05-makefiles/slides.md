@@ -14,297 +14,263 @@ June 13, 2017
 Session overview
 ------------------------------------------------------------------------
 1. Intro, Linux basics and file management
-2. <mark>More commands and piping</mark>
+2. More commands and piping
 3. Bash scripting
 4. Regular Expressions
-5. Makefiles
+5. <mark>Makefiles</mark>
 6. Git
-8. DESY IT (Sven Sternberger)
+7. DESY IT (Sven Sternberger)
 
 
 ---
-Streams in Linux
+Building software (and other things)
 ------------------------------------------------------------------------
-There are three I/O streams of processes
-- standard input (`STDIN`) (0)
-- standard output (`STDOUT`) (1)
-- standard error (`STDERR`) (2)
+There is often the case where we have <mark>one "source" file</mark>
+that if processed by a program will produce <mark>one or more output
+files</mark>
+- `.c` -> `.o`
+- `.f90` -> `.o`, `.mod`
+- `.tex` -> `.pdf`
+- ...
 
-The separation of output allows to stream `STDOUT` in another program or
-file while still seeing errors on screen
-
-We can redirect `STDERR` to `STDOUT` by <br>
-adding `2>&1` when needed
+Furthermore, there are usually multiple source files and the results
+will <mark>depend</mark> on each other
 
 ===
-Redirecting streams
+Make
 ------------------------------------------------------------------------
-<ul>
-<li> `program > file` writes output in a `file` instead of printing to
-  screen, e.g. `ls -la > listing.log` </li>
-<div>
-<li> `program >> file` like `>` but attaches to the end instead of
-    overwriting `file` </li>
-</div><!-- .element: class="fragment" -->
-</ul>
-<div>
-- `program < file` input is taken from `file` instead of keyboard
-</div><!-- .element: class="fragment" -->
+`make` automatically determines which pieces have to be "recompiled" and
+"compiles" them
+
+For this to work, there can be <mark>rules</mark> how objects should be
+generated and <mark>extra dependencies</mark> in the `Makefile`
+
+Additionally, there are already builtin rules in `make`
 
 ===
-Use the pipe
+Make rule syntax
 ------------------------------------------------------------------------
-<img src="images/kanal2.png" width="100%">
-<br><br>
-
 ```bash
-  program1 | program2
+  TARGET: DEPENDENCIES
+    RULE
+```
+
+`RULE` must be indented by a `<TAB>`
+
+Can contain multiple lines of commands
+
+Comments start with `#`
+
+---
+A toy example
+------------------------------------------------------------------------
+```c
+  # hellomake.c
+  #include <hellomake.h>
+  int main() {
+    // call a function in another file
+    myPrintHelloMake();
+    return(0);
+  }
+```
+<br>
+```c
+  # hellofunc.c
+  #include <stdio.h>
+  #include <hellomake.h>
+  void myPrintHelloMake(void) {
+    printf("Hello makefiles!\n");
+    return;
+  }
+```
+<br>
+```c
+  # hellomake.h
+  void myPrintHelloMake(void);
 ```
 
 ===
-Using standard streams
+First toy makefile
 ------------------------------------------------------------------------
-Many linux commands read from `STDIN` when no filename is given
+Normally this could be compiled as
+  ```bash
+  gcc -o hellomake hellomake.c hellofunc.c -I.
+  ```
 
-This allows to easily chain together small "programs"
+For more files this becomes quickly <mark>unhandy</mark> (typing the
+whole command or going back in command history) and
+<mark>unefficient</mark> (recompiles everything)
 
-Comes from the <mark>UNIX philosophy</mark> (Bell System Technical Journal, 1978)
+<div>
+Simplest `Makefile` to capture this
+  ```bash
+  hellomake: hellomake.c hellofunc.c
+  	gcc -o hellomake hellomake.c hellofunc.c -I.
+  ```
+</div><!-- .element: class="fragment" -->
 
->  Make each program do one thing well.
->  [...]
->  Expect the output of every program to become the input to another, as
->  yet unknown, program
+Note:
+- TAB is important
+- still recompiles everything
+
+===
+Second toy makefile
+------------------------------------------------------------------------
+Note that compiling (`.c` -> `.o`) and linking (resulting in the main
+program) can be separated in two steps
+
+  ```bash
+  CC=gcc
+  CFLAGS=-I.
+  hellomake: hellomake.o hellofunc.o
+  	$(CC) -o hellomake hellomake.o hellofunc.o $(CFLAGS)
+  ```
+
+<div>
+  This works because `make` already has the inbuilt rule <br>
+  to build an `.o` out of an `.c` file
+</div><!-- .element: class="fragment" -->
+
+<div>
+Dependency on `.h` is still missing. We can set it explicitely
+  ```bash
+  hellomake.o hellofunc.o: hellomake.h
+  ```
+</div><!-- .element: class="fragment" -->
+
+===
+More toy makefiles
+------------------------------------------------------------------------
+We can also overwrite the default rule
+<div>
+  ```bash
+  DEPS = hellomake.h
+
+  %.o: %.c $(DEPS)
+  	$(CC) -c -o $@ $< $(CFLAGS)
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
+  Say hello to `make`s userfriendly name for <br>
+  target (`$@`) and first dependency (`$<`)
+
+  Furthermore, the is the list of all dependencies (`$^`)
+</div><!-- .element: class="fragment" -->
+
+===
+Almost there
+------------------------------------------------------------------------
+Cleaning up our final link step, our Makefile looks like this
+<div>
+  ```bash
+  CC=gcc
+  CFLAGS=-I.
+  DEPS = hellomake.h
+  OBJ = hellomake.o hellofunc.o
+
+  %.o: %.c $(DEPS)
+  	$(CC) -c -o $@ $< $(CFLAGS)
+
+  hellomake: $(OBJ)
+  	$(CC) -o $@ $^ $(CFLAGS)
+  ```
+</div><!-- .element: class="fragment" -->
+
+===
+Last touch
+------------------------------------------------------------------------
+There should be also a rule to `clean` our build folder up
+  ```bash
+  .PHONY: clean
+
+  clean:
+  	rm -f $(ODIR)/*.o *~ core $(INCDIR)/*~ 
+  ```
+
+`clean` is declared as `PHONY` target, ensuring it is performed even if
+there is a file called `clean` in the directory
+
+You can specify a target on the cmdline: `make clean`
 
 ---
-More tools
+Some more idiosyncracies
 ------------------------------------------------------------------------
-<img src="images/camper-swiss-knife.jpg" width="50%">
-
-===
-Counting
-------------------------------------------------------------------------
-We can do a `w`ord `c`ount of files
-
+If you want to access environment variables, you need to escape the `$`
+(different set of variables)
 <div>
   ```bash
-  wc /usr/share/dict/words
-  # 99171    99171 938848 /usr/share/dict/words
-  # newlines words bytes
-  ```
-</div><!-- .element: class="fragment" -->
-<div>
-It also sums over multiple files
-  ```bash
-  wc -l src/*/*nw
-  #   ...
-  #   1205 src/utilities/utilities.nw
-  #   6381 src/variables/variables.nw
-  #   3943 src/vegas/vegas.nw
-  #  27531 src/whizard-core/whizard.nw
-  # 289172 total
+  foo:
+    echo $$SHELL
   ```
 </div><!-- .element: class="fragment" -->
 
-===
-Counting Excercise
-------------------------------------------------------------------------
-- Find out how many folders are in a directory
-<div>
-  ```
-  echo */ | wc -w
-  ```
-</div><!-- .element: class="fragment" -->
-
-- Find out how many files and folders are in a directory
-<div>
-  ```
-  ls | wc -w
-  ```
-</div><!-- .element: class="fragment" -->
-
-===
-Remove and count duplicates
-------------------------------------------------------------------------
-`uniq` can filter duplicate lines or count them
-<div>
-  ```bash
-  echo 'foo' >> foo
-  echo 'foo' >> foo
-  echo 'foo' >> foo
-  cat foo
-  uniq -c foo
-  ```
-</div><!-- .element: class="fragment" -->
+You have to write longer shell statements in one line (can be separated
+with `\ `) as otherwise the context is lost
 
 <div>
-  Only counts duplicates next too each other
-</div><!-- .element: class="fragment" -->
-
-<div>
-`sort`ing the input can help
   ```bash
-  echo 'foo' >> foo2
-  echo 'bar' >> foo2
-  echo 'foo' >> foo2
-  cat foo
-  cat foo | sort | uniq -c
-  ```
-</div><!-- .element: class="fragment" -->
-
-===
-Disk usage
-------------------------------------------------------------------------
-`d`isk `u`sage can be shown in `h`uman friendly mode
-<div>
-  ```bash
-  du -h
-  ```
-</div><!-- .element: class="fragment" -->
-
-<div>
-Also `sort` can work with `h`uman friendly sizes
-  ```bash
-  du -h | sort -h
-  ```
-</div><!-- .element: class="fragment" -->
-<div>
-  `du` can also show summaries only
-  ```bash
-  du -sh -- * | sort -h
-  ```
-</div><!-- .element: class="fragment" -->
-
----
-Clip and cut
-------------------------------------------------------------------------
-We can get only the `head` or `tail` of a file or input stream
-<div>
-  ```bash
-  head /usr/share/dict/words
-  tail /usr/share/dict/words
-  ```
-</div><!-- .element: class="fragment" -->
-<div>
-The number of lines it should be can of course be specified
-  ```bash
-  head -n1 /usr/share/dict/words
-  tail -n15 /usr/share/dict/words
-  ```
-</div><!-- .element: class="fragment" -->
-<div>
-`tail` is also great for `f`ollowing logs
-  ```bash
-  tail -f some-growing-file.log
+foo:
+	tmpdir=foo
+	echo $$tmpdir
+foo:
+	tmpdir=foo; echo $$tmpdir
+foo:
+	tmpdir=foo; \
+		echo $$tmpdir
   ```
 </div><!-- .element: class="fragment" -->
 
 ---
-Basic searching
+Lets build make
 ------------------------------------------------------------------------
-`grep` is a quite powerful search tool that suffices for basic usage
-  ```bash
-  grep PATTERN file
-  ```
 <div>
-Also works `r`ecursively
   ```bash
-  grep -r foo *
+  wget http://ftp.gnu.org/gnu/make/make-4.0.tar.gz
   ```
 </div><!-- .element: class="fragment" -->
 <div>
-We could use this to count how often we use certain words
   ```bash
-  grep -r obviously * | wc -l
+  tar xzf make-4.0.tar.gz
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
+  ```bash
+  cd make-4.0
+  ./configure --prefix=`pwd`/../install
+  make -j4
+  make install
   ```
 </div><!-- .element: class="fragment" -->
 
 ===
-More searching
+Autotools
 ------------------------------------------------------------------------
-Searching helps to get the exact information you need
-<div>
-  ```bash
-  grep 'model name' /proc/cpuinfo | uniq -c
-  # 4 model name      : Intel(R) Core(TM) i5-6200U CPU @ 2.30GHz
-  ```
-</div><!-- .element: class="fragment" -->
-<div>
-  `grep` can also `c`ount directly
-  ```bash
-  grep -c 'model name' /proc/cpuinfo
-  # 4
-  ```
-</div><!-- .element: class="fragment" -->
+Standard set of tools/scripts that allow to test for dependencies and
+generate a `configure` script
 
-===
-More options
-------------------------------------------------------------------------
-<div>
-  You can in`v`ert your search with `-v`
-  ```bash
-  grep -cv 'model name' /proc/cpuinfo
-  # 104
-  ```
-</div><!-- .element: class="fragment" -->
+Never try to modify a `Makefile` that has been generated by `autotools`
 
-<div>
-  Sometimes the case should be ignored
-  ```bash
-  grep -i intel /proc/cpuinfo
-  ```
-</div><!-- .element: class="fragment" -->
-
-===
-Monitoring ourselves
-------------------------------------------------------------------------
-`ps` gives a `s`napshot of `p`rocesses and with `-eLF` it gives a big
-list of processes including the username
-
-We can use this to count our processes
-<div>
-  ```bash
-  ps -eLF | grep ^$USER | wc -l
-  ```
-</div><!-- .element: class="fragment" -->
-
-<div>
-Similarily `top -b -n1` gives a snapshot. We often only care about the
-head
-</div><!-- .element: class="fragment" -->
-<div>
-  ```bash
-  top -b -n1 | grep $USER | head
-  ```
-</div><!-- .element: class="fragment" -->
-
+Instead, look at `Makefile.am`. `Makefile` should be regenerated
+automatically. In case of doubt, <br>
+`autoreconf` and fresh build
 
 ---
-Working With Processes
+Parallel Make
 ------------------------------------------------------------------------
-`<Ctrl>+<C>`: Interrupt (kill) the current foreground process running in
-in the terminal. This sends the SIGINT signal to the process, which is
-technically just a request—most processes will honor it, but some may
-ignore it.
+You can simply supply the number of `j`obs you want `make` to use
 
-`<Ctrl>+<Z>`: Suspend the current foreground process running in bash.
-This sends the SIGTSTP signal to the process. To return the process to
-the foreground later, use the fg process_name command.
+If you leave out an exact number (`make -j`), <br>
+`make` will fork as many processes as allowed <br>by the dependencies
+(problematic in huge parallel builds)
 
-`<Ctrl>+<D>`: Close the bash shell. This sends an EOF (End-of-file)
-marker to bash, and bash exits when it receives this marker. This is
-similar to running the exit command.
+You can make an alias like `m=make -j $num_cores`
 
----
-Chaining commands
+===
+Silent make
 ------------------------------------------------------------------------
-There are multiple ways to combine commands
+Verbosity can be controlled with `-s`, which will not print the command
+as they are executed <br>
+(nice if you already know whats happening)
 
-**`command1 ; command2`** <br>
-`command2` is executed after `command1` is done <br>
-**`command1 && command2`** <br>
-`command2` is executed after `command1` is done and returns 0 <br>
-**`command1 || command2`** <br>
-`command2` is executed after `command1` is done and returns not 0 <br>
-**`command1 & command2`** <br>
-`command1` is executed in background and `command2` is executed in
-foreground at the same time <br>
+If the `Makefile` is generated by `autotools`, you can suppress output
+with `V=0`

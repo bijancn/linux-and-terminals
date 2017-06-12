@@ -19,8 +19,7 @@ Session overview
 4. Regular Expressions
 5. Makefiles
 6. Git
-8. DESY IT (Sven Sternberger)
-
+7. DESY IT (Sven Sternberger)
 
 ---
 Streams in Linux
@@ -50,6 +49,31 @@ Redirecting streams
 <div>
 - `program < file` input is taken from `file` instead of keyboard
 </div><!-- .element: class="fragment" -->
+
+
+===
+Redirecting examples
+------------------------------------------------------------------------
+  ```bash
+  echo foo > foo.log
+  echo foo > foo.log
+  cat foo
+  echo foo >> foo.log
+  echo foo >> foo.log
+  cat foo
+  ```
+<div>
+We can also redirect to `/dev/null` (thrown away)
+  ```bash
+  echo foooo              > /dev/null
+  cp archive archive2     2> /dev/null
+  cp archive archive2     2>&1 > /dev/null
+  cp -vr archive archive2 2>/dev/null 1>&2
+  cp -vr archive archive2 1>&2 2>/dev/null
+  cp -vr archive archive2 &>/dev/null
+  ```
+</div><!-- .element: class="fragment" -->
+
 
 ===
 Use the pipe
@@ -110,14 +134,16 @@ Counting Excercise
 ------------------------------------------------------------------------
 - Find out how many folders are in a directory
 <div>
-  ```
+  ```bash
   echo */ | wc -w
   ```
 </div><!-- .element: class="fragment" -->
 
-- Find out how many files and folders are in a directory
 <div>
-  ```
+  - Find out how many files and folders are in a directory
+</div><!-- .element: class="fragment" -->
+<div>
+  ```bash
   ls | wc -w
   ```
 </div><!-- .element: class="fragment" -->
@@ -125,7 +151,7 @@ Counting Excercise
 ===
 Remove and count duplicates
 ------------------------------------------------------------------------
-`uniq` can filter duplicate lines or count them
+`uniq` can filter duplicate lines and count them
 <div>
   ```bash
   echo 'foo' >> foo
@@ -198,6 +224,76 @@ The number of lines it should be can of course be specified
   ```
 </div><!-- .element: class="fragment" -->
 
+===
+Downloading
+------------------------------------------------------------------------
+Most files and even directories can be downloaded<br>
+from the net`w`ork with `wget`
+<div>
+  ```bash
+  wget google.de
+  wget -r http://www.desy.de/~bcho/top_decay/
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
+  Another powerful tool for web interactions is `curl`
+
+  Often similar to `wget` but can also send information
+
+  <div>
+  ```bash
+  curl https://www.google.de
+  curl "https://inspirehep.net/search?p=SEARCHTERM&of=hx&em=B&sf=year&so=d"
+  ```
+  </div><!-- .element: class="fragment" -->
+</div><!-- .element: class="fragment" -->
+
+
+===
+See differences
+------------------------------------------------------------------------
+`diff` compares files line by line and shows the difference
+  ```bash
+  # foo            # foo2
+  fooo             fooo
+  fooo             fooo
+  fooo
+  ```
+  ```bash
+  diff foo foo2
+  # 3d2
+  # < fooo
+  ```
+In the `3`rd line there is additional content in the left file (`<`)
+
+There is <mark>no output</mark> when there is <mark>no difference</mark>
+
+===
+More differences
+------------------------------------------------------------------------
+Some nice options for `diff`ing
+<div>
+  ```bash
+  diff foo foo2 --side-by-side
+  # fooo                      fooo
+  # fooo                      fooo
+  # fooo                    <
+  diff foo foo2 --unified
+  # --- foo 2017-06-12 17:02:47.120620683 +0200
+  # +++ foo2        2017-06-12 17:02:56.236757886 +0200
+  # @@ -1,3 +1,2 @@
+  #  fooo
+  #  fooo
+  # -fooo
+  ```
+</div><!-- .element: class="fragment" -->
+
+<div>
+  `-w` ignores all white space differences
+  
+  `-B` ignores blank lines
+</div><!-- .element: class="fragment" -->
+
 ---
 Basic searching
 ------------------------------------------------------------------------
@@ -237,7 +333,7 @@ Searching helps to get the exact information you need
 </div><!-- .element: class="fragment" -->
 
 ===
-More options
+More grep options
 ------------------------------------------------------------------------
 <div>
   You can in`v`ert your search with `-v`
@@ -254,7 +350,13 @@ More options
   ```
 </div><!-- .element: class="fragment" -->
 
+
 ===
+Finding files and directories
+------------------------------------------------------------------------
+
+
+---
 Monitoring ourselves
 ------------------------------------------------------------------------
 `ps` gives a `s`napshot of `p`rocesses and with `-eLF` it gives a big
@@ -308,3 +410,9 @@ There are multiple ways to combine commands
 **`command1 & command2`** <br>
 `command1` is executed in background and `command2` is executed in
 foreground at the same time <br>
+
+
+---
+Summary
+------------------------------------------------------------------------
+

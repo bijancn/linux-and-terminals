@@ -14,297 +14,319 @@ June 13, 2017
 Session overview
 ------------------------------------------------------------------------
 1. Intro, Linux basics and file management
-2. <mark>More commands and piping</mark>
+2. More commands and piping
 3. Bash scripting
-4. Regular Expressions
+4. <mark>Regular Expressions</mark>
 5. Makefiles
 6. Git
 8. DESY IT (Sven Sternberger)
 
 
 ---
-Streams in Linux
+Regular Expressions
 ------------------------------------------------------------------------
-There are three I/O streams of processes
-- standard input (`STDIN`) (0)
-- standard output (`STDOUT`) (1)
-- standard error (`STDERR`) (2)
+Also known as
+- RegExp
+- Regex
+- ASCII puke
 
-The separation of output allows to stream `STDOUT` in another program or
-file while still seeing errors on screen
-
-We can redirect `STDERR` to `STDOUT` by <br>
-adding `2>&1` when needed
+*A way to describe a <mark>set of strings</mark>*
 
 ===
-Redirecting streams
+Regular Expressions
 ------------------------------------------------------------------------
-<ul>
-<li> `program > file` writes output in a `file` instead of printing to
-  screen, e.g. `ls -la > listing.log` </li>
-<div>
-<li> `program >> file` like `>` but attaches to the end instead of
-    overwriting `file` </li>
-</div><!-- .element: class="fragment" -->
-</ul>
-<div>
-- `program < file` input is taken from `file` instead of keyboard
-</div><!-- .element: class="fragment" -->
+Can be used in
+- programming languages
+- editors, IDEs
+- command line tools (grep, sed, etc.)
+- databases
+- ...
+
+Often similar syntax with notable differences
 
 ===
-Use the pipe
+The greps
 ------------------------------------------------------------------------
-<img src="images/kanal2.png" width="100%">
-<br><br>
+FYI: grep = global/regular expression/print
 
+- Standard `grep` understand basic regular expressions
+- `egrep/grep -E` interprets extended regular expressions
+- `grep -P` uses Perl-compatible regular expressions (PCRE)
+
+PCRE is also seen in some other tools
+
+---
+Technical side note
+------------------------------------------------------------------------
+Make sure you have color in grepping
+
+Put in your `.bashrc` or running terminal
 ```bash
-  program1 | program2
+  export GREP_OPTIONS='--color=auto'
 ```
 
 ===
-Using standard streams
+Basic grep examples
 ------------------------------------------------------------------------
-Many linux commands read from `STDIN` when no filename is given
+Let's say you want to find all the words in `/usr/share/dict/words` that
+contains the letter `a`
 
-This allows to easily chain together small "programs"
+<div>
+  ```bash
+  cat /usr/share/dict/words | grep a
+  ```
+</div><!-- .element: class="fragment" -->
 
-Comes from the <mark>UNIX philosophy</mark> (Bell System Technical Journal, 1978)
+<div>
+  Or you actually only need the words that start with an `a`.
+  E.g.
+  ```bash
+  cat /usr/share/dict/words | grep '^a'
+  ```
+</div><!-- .element: class="fragment" -->
 
->  Make each program do one thing well.
->  [...]
->  Expect the output of every program to become the input to another, as
->  yet unknown, program
+<div>
+  Or the ones that end with an `a`
+  ```bash
+  cat /usr/share/dict/words | grep 'a$'
+  ```
+</div><!-- .element: class="fragment" -->
 
----
-More tools
-------------------------------------------------------------------------
-<img src="images/camper-swiss-knife.jpg" width="50%">
+Note:
+- Quotes avoid that special characters get interpreted by bash
+
 
 ===
-Counting
+Basic bash examples
 ------------------------------------------------------------------------
-We can do a `w`ord `c`ount of files
+`bash` has globbing, which is a very basic `regex`
 
+We already used `*` occassionally to select everything
+
+We can also prepend or append letters
 <div>
   ```bash
-  wc /usr/share/dict/words
-  # 99171    99171 938848 /usr/share/dict/words
-  # newlines words bytes
+  echo D*
+  # Desktop Documents Downloads
+  echo *.png
   ```
 </div><!-- .element: class="fragment" -->
+
 <div>
-It also sums over multiple files
+`*` is called the wildcard character and <br>
+you can use any number of them
   ```bash
-  wc -l src/*/*nw
-  #   ...
-  #   1205 src/utilities/utilities.nw
-  #   6381 src/variables/variables.nw
-  #   3943 src/vegas/vegas.nw
-  #  27531 src/whizard-core/whizard.nw
-  # 289172 total
-  ```
-</div><!-- .element: class="fragment" -->
-
-===
-Counting Excercise
-------------------------------------------------------------------------
-- Find out how many folders are in a directory
-<div>
-  ```
-  echo */ | wc -w
-  ```
-</div><!-- .element: class="fragment" -->
-
-- Find out how many files and folders are in a directory
-<div>
-  ```
-  ls | wc -w
-  ```
-</div><!-- .element: class="fragment" -->
-
-===
-Remove and count duplicates
-------------------------------------------------------------------------
-`uniq` can filter duplicate lines or count them
-<div>
-  ```bash
-  echo 'foo' >> foo
-  echo 'foo' >> foo
-  echo 'foo' >> foo
-  cat foo
-  uniq -c foo
-  ```
-</div><!-- .element: class="fragment" -->
-
-<div>
-  Only counts duplicates next too each other
-</div><!-- .element: class="fragment" -->
-
-<div>
-`sort`ing the input can help
-  ```bash
-  echo 'foo' >> foo2
-  echo 'bar' >> foo2
-  echo 'foo' >> foo2
-  cat foo
-  cat foo | sort | uniq -c
-  ```
-</div><!-- .element: class="fragment" -->
-
-===
-Disk usage
-------------------------------------------------------------------------
-`d`isk `u`sage can be shown in `h`uman friendly mode
-<div>
-  ```bash
-  du -h
-  ```
-</div><!-- .element: class="fragment" -->
-
-<div>
-Also `sort` can work with `h`uman friendly sizes
-  ```bash
-  du -h | sort -h
-  ```
-</div><!-- .element: class="fragment" -->
-<div>
-  `du` can also show summaries only
-  ```bash
-  du -sh -- * | sort -h
+  echo *l*
   ```
 </div><!-- .element: class="fragment" -->
 
 ---
-Clip and cut
+Back to grep
 ------------------------------------------------------------------------
-We can get only the `head` or `tail` of a file or input stream
+You might wonder how many words not only end with `a` but have one
+character before that and an `o` before that
 <div>
   ```bash
-  head /usr/share/dict/words
-  tail /usr/share/dict/words
-  ```
-</div><!-- .element: class="fragment" -->
-<div>
-The number of lines it should be can of course be specified
-  ```bash
-  head -n1 /usr/share/dict/words
-  tail -n15 /usr/share/dict/words
-  ```
-</div><!-- .element: class="fragment" -->
-<div>
-`tail` is also great for `f`ollowing logs
-  ```bash
-  tail -f some-growing-file.log
+  cat /usr/share/dict/words | grep 'o.a$'
   ```
 </div><!-- .element: class="fragment" -->
 
----
-Basic searching
-------------------------------------------------------------------------
-`grep` is a quite powerful search tool that suffices for basic usage
-  ```bash
-  grep PATTERN file
-  ```
 <div>
-Also works `r`ecursively
+  While `^` and `$` only specify start and end of a line, `.` allows to
+  match exactely one character (numbers are also characters)
+</div><!-- .element: class="fragment" -->
+
+<div>
+If we want to search for an explicit `.`, <br>
+we have to <mark>escape</mark> it with `\ `
   ```bash
-  grep -r foo *
+  cat /usr/share/dict/words | grep 'o\.a$'
+  ```
+</div><!-- .element: class="fragment" -->
+
+Note:
+-  (like `yoga`)
+- Either you want to cheat at scrabble or you really want to become a
+  rap artist
+
+===
+Ranges
+------------------------------------------------------------------------
+We can also look for ranges of characters instead of one specific or any
+character (also called classes)
+<div>
+  ```bash
+  cat /usr/share/dict/words | grep '[t-z]$'
   ```
 </div><!-- .element: class="fragment" -->
 <div>
-We could use this to count how often we use certain words
+Same goes for numbers
   ```bash
-  grep -r obviously * | wc -l
+  cat /proc/cpuinfo | grep '[0-9][0-9]'
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
+Or directly specify the characters you want
+  ```bash
+  cat /usr/share/dict/words | grep 't[aeiou]z$'
+  cat /usr/share/dict/words | grep 't[aeiou][t-zT-Z0-9]$'
   ```
 </div><!-- .element: class="fragment" -->
 
 ===
-More searching
+Character Class Abbreviations
 ------------------------------------------------------------------------
-Searching helps to get the exact information you need
+Predefined set of classes
+- `[[:alpha:]]` is `[a-zA-Z]`
+- `[[:upper:]]` is `[A-Z]`
+- `[[:lower:]]` is `[a-z]`
+- `[[:digit:]]` is `[0-9]`
+- `[[:alnum:]]` is `[a-zA-Z0-9]`
+- `[[:space:]]` is any whitespace including tabs
+
+Help to keep `regex` cleaner/more readable
+
+===
+Shorter Character Class Abbreviations
+------------------------------------------------------------------------
+In PCRE (`grep -P`), you can also use the shorter variants
+- `\d` is `[0-9]`
+- `\w` is `[a-zA-Z0-9_]`
+- `\s` is `[ \t\n\r\f]` (space)
+
+And there is negation
+- `\D` is `[^0-9]`
+- `\W` is `[^a-zA-Z0-9_]`
+- `\S` is `[^ \t\n\r\f]` (space)
+
+===
+Negation
+------------------------------------------------------------------------
+Negation with the caret `^` of course also works in custom classes
+  ```bash
+  cat /usr/share/dict/words | grep 't[^aeiou]z$'
+  cat /usr/share/dict/words | grep 't[^aeiou][^z]$'
+  ```
+
+Logic gets more complicated with negation,<br>
+so use it only when really needed
+
+===
+Word boundaries
+------------------------------------------------------------------------
+- `\b` and `\>` matches at word boundaries
+- `\B` matches not at word boundaries <br><br>
+
 <div>
   ```bash
-  grep 'model name' /proc/cpuinfo | uniq -c
-  # 4 model name      : Intel(R) Core(TM) i5-6200U CPU @ 2.30GHz
+  cat /usr/share/dict/words | grep  'mi\B'
+  cat /usr/share/dict/words | grep  'mi\b'
+  cat /usr/share/dict/words | grep  'mi\>'
+  ```
+</div><!-- .element: class="fragment" -->
+
+---
+Quantifiers
+------------------------------------------------------------------------
+We can specify how many of a specific character should occur
+- `+` is 1 or more of a character (class)
+- `?` is 0 or 1 of a character (class)
+- `*` is 0 or more of a character (class)
+- `{4}` is exactely 4 of a character (class)
+
+===
+Examples
+------------------------------------------------------------------------
+<div>
+  ```bash
+  cat /usr/share/dict/words | egrep  'm{2}'
+  cat /usr/share/dict/words | egrep  '[aeiou]{4}'
+  echo 'bijan@chokoufe.com' | egrep '^\w+@\w+.\w+$'
+  cat /usr/share/dict/words | egrep  'bo?t'
+  cat /usr/share/dict/words | egrep  'bo+t'
+  cat /usr/share/dict/words | egrep  'bo*t'
+  ```
+</div><!-- .element: class="fragment" -->
+
+
+===
+More quantifiers
+------------------------------------------------------------------------
+You can also give a range in the braces `{3,5}`
+
+- `+` is `{1,}`
+- `?` is `{0,1}`
+- `*` is `{0,}`
+
+---
+Groups
+------------------------------------------------------------------------
+You can put patterns in groups <br>
+that might <mark>repeat</mark> or be <mark>combined</mark>
+
+<div>
+  ```bash
+  cat /usr/share/dict/words | grep -P '(k){2,}'
+  cat /usr/share/dict/words | grep '\(k\)\{2,\}'
   ```
 </div><!-- .element: class="fragment" -->
 <div>
-  `grep` can also `c`ount directly
   ```bash
-  grep -c 'model name' /proc/cpuinfo
-  # 4
+  cat /usr/share/dict/words | grep -P 'e((ak)|(fo))'
   ```
 </div><!-- .element: class="fragment" -->
 
 ===
-More options
+Greedyness
 ------------------------------------------------------------------------
+`Regex` searches are usually greedy
+
+They match as much as possible
 <div>
-  You can in`v`ert your search with `-v`
   ```bash
-  grep -cv 'model name' /proc/cpuinfo
-  # 104
+  echo '<p>foo</p>' | egrep '<.+>'
   ```
 </div><!-- .element: class="fragment" -->
-
 <div>
-  Sometimes the case should be ignored
+You can have a `lazy` or `non-greedy` search by adding the modifier `?`
+after the quantifier
   ```bash
-  grep -i intel /proc/cpuinfo
+  echo '<p>foo</p>' | grep -P '<.+?>'
+  ```
+</div><!-- .element: class="fragment" -->
+---
+Replacing
+------------------------------------------------------------------------
+`sed` the `s`tream `ed`itor modifies streams of data
+
+Good for find and replace
+
+E.g.
+  ```bash
+  cat /proc/cpuinfo | sed 's/:/---/'
+  cat /proc/cpuinfo | sed 's/:/---/' | sed 's/bits/BITS/g'
+  ```
+The `g`lobal flag substitutes multiple times on a <mark>line</mark>
+
+`s` specifies a `s`ubstitution command. There is also `d`eletion
+
+===
+Deleting
+------------------------------------------------------------------------
+<div>
+  ```bash
+  cat /proc/cpuinfo | sed '/\(bogo\|flags\)/d'
+  cat /proc/cpuinfo | grep -v '\(bogo\|flags\)'
   ```
 </div><!-- .element: class="fragment" -->
 
 ===
-Monitoring ourselves
+Extracting
 ------------------------------------------------------------------------
-`ps` gives a `s`napshot of `p`rocesses and with `-eLF` it gives a big
-list of processes including the username
-
-We can use this to count our processes
+You have access to the groups matched in the regexp and <br>
+can use them in the replacement as <mark>back reference</mark>
 <div>
   ```bash
-  ps -eLF | grep ^$USER | wc -l
+  cat /proc/cpuinfo | grep 'cpu MHz' | sed 's/^.*\( [0-9]\+\.[0-9]\+\)/\1/'
   ```
 </div><!-- .element: class="fragment" -->
-
-<div>
-Similarily `top -b -n1` gives a snapshot. We often only care about the
-head
-</div><!-- .element: class="fragment" -->
-<div>
-  ```bash
-  top -b -n1 | grep $USER | head
-  ```
-</div><!-- .element: class="fragment" -->
-
-
----
-Working With Processes
-------------------------------------------------------------------------
-`<Ctrl>+<C>`: Interrupt (kill) the current foreground process running in
-in the terminal. This sends the SIGINT signal to the process, which is
-technically just a request—most processes will honor it, but some may
-ignore it.
-
-`<Ctrl>+<Z>`: Suspend the current foreground process running in bash.
-This sends the SIGTSTP signal to the process. To return the process to
-the foreground later, use the fg process_name command.
-
-`<Ctrl>+<D>`: Close the bash shell. This sends an EOF (End-of-file)
-marker to bash, and bash exits when it receives this marker. This is
-similar to running the exit command.
-
----
-Chaining commands
-------------------------------------------------------------------------
-There are multiple ways to combine commands
-
-**`command1 ; command2`** <br>
-`command2` is executed after `command1` is done <br>
-**`command1 && command2`** <br>
-`command2` is executed after `command1` is done and returns 0 <br>
-**`command1 || command2`** <br>
-`command2` is executed after `command1` is done and returns not 0 <br>
-**`command1 & command2`** <br>
-`command1` is executed in background and `command2` is executed in
-foreground at the same time <br>
