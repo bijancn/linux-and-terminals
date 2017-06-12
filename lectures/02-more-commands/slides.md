@@ -200,6 +200,34 @@ Also `sort` can work with `h`uman friendly sizes
   ```
 </div><!-- .element: class="fragment" -->
 
+===
+Date and time
+------------------------------------------------------------------------
+`date` allows to print (and set) the system date and time
+
+```bash
+  date
+  # Mon Jun 12 21:09:25 CEST 2017
+  date --iso
+  # 2017-06-12
+```
+
+<div>
+You can also give it the format it should use
+  ```bash
+  date +%B\ %d,\ %Y
+  # June 12, 2017
+  ```
+</div><!-- .element: class="fragment" -->
+
+<div>
+  Or change the timezone
+  ```bash
+    date -u
+    # Mon Jun 12 19:14:23 UTC 2017
+  ```
+</div><!-- .element: class="fragment" -->
+
 ---
 Clip and cut
 ------------------------------------------------------------------------
@@ -292,6 +320,47 @@ Some nice options for `diff`ing
   `-w` ignores all white space differences
 
   `-B` ignores blank lines
+</div><!-- .element: class="fragment" -->
+
+===
+Tarring
+------------------------------------------------------------------------
+`tar` is the standard tool for bundling and compressing on Linux
+
+You have to tell him first what he should do,<br>
+then you add the files
+
+<div>
+  `c`reate an archive `v`erbosively with a given `f`ilename
+  ```bash
+  tar -cvf archive.tar *txt
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
+  e`x`traction works the same way
+  ```bash
+  tar -xvf archive.tar
+  ```
+</div><!-- .element: class="fragment" -->
+
+===
+Adding compression
+------------------------------------------------------------------------
+You can add an compression to decrease the archive size
+
+`j` for `bzip2` and `z` for `gzip`
+
+`gzip` is very fast and on the same order of magnitude <br>
+as the best compression rates
+
+<div>
+  ```bash
+  tar -czvf archive.tar.gz *txt
+  tar -xzvf archive.tar.gz
+  ```
+</div><!-- .element: class="fragment" -->
+<div>
+  <img src="images/tar_2x.png" width="60%">
 </div><!-- .element: class="fragment" -->
 
 ---
@@ -415,46 +484,6 @@ larger than 10MB
   (There is also `-o` for `or`)
 </div><!-- .element: class="fragment" -->
 
----
-Tarring
-------------------------------------------------------------------------
-`tar` is the standard tool for bundling and compressing on Linux
-
-You have to tell him first what he should do,<br>
-then you add the files
-
-<div>
-  `c`reate an archive `v`erbosively with a given `f`ilename
-  ```bash
-  tar -cvf archive.tar *txt
-  ```
-</div><!-- .element: class="fragment" -->
-<div>
-  e`x`traction works the same way
-  ```bash
-  tar -xvf archive.tar
-  ```
-</div><!-- .element: class="fragment" -->
-
-===
-Adding compression
-------------------------------------------------------------------------
-You can add an compression to decrease the archive size
-
-`j` for `bzip2` and `z` for `gzip`
-
-`gzip` is very fast and on the same order of magnitude <br>
-as the best compression rates
-
-<div>
-  ```bash
-  tar -czvf archive.tar.gz *txt
-  tar -xzvf archive.tar.gz
-  ```
-</div><!-- .element: class="fragment" -->
-<div>
-  <img src="images/tar_2x.png" width="60%">
-</div><!-- .element: class="fragment" -->
 
 ---
 Monitoring ourselves

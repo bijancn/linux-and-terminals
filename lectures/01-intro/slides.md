@@ -397,6 +397,18 @@ We go up the tree with `..`
   ```
 </div><!-- .element: class="fragment" -->
 <div>
+And back with the dash `-`
+  ```bash
+  cd -
+  ```
+</div><!-- .element: class="fragment" -->
+
+===
+Some basic directory movements
+------------------------------------------------------------------------
+`cd` also works without an argument
+
+<div>
 Our `p`resent `w`orking `d`irectory is printed by <br>
 `pwd` as <mark>absolute pathname</mark>
   ```bash

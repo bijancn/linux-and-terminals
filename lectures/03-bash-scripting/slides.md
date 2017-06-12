@@ -132,8 +132,8 @@ is ignored (if it is not in a string)
   Two kinds of quoting strings:
   - Single quotes (`'`) enclose a **literal** string where nothing is
     expanded (cannot print `'` within `' '`)
-  - Doubles quotes (`"`) enclose a string where `$`, \` and `\ ` are
-      expanded
+  - Doubles quotes (`"`) enclose an **interpolating** string where `$`,
+    \` and `\ ` are expanded
 </div><!-- .element: class="fragment" -->
 
 <div>
@@ -507,3 +507,10 @@ Let's compute factorials
   done
   ```
 </div><!-- .element: class="fragment" -->
+
+---
+Summary
+------------------------------------------------------------------------
+- Functions and bash scripts
+- More useful bash tricks
+- Looping and conditionals
