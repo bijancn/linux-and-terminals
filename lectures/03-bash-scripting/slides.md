@@ -403,7 +403,7 @@ optional arguments to your script
 </div><!-- .element: class="fragment" -->
 
 ---
-Iteration
+Looping
 ------------------------------------------------------------------------
 The `while COMMAND; do COMMANDS; done` form executes commands until the
 `COMMAND` returns non-zero
@@ -419,20 +419,89 @@ The `while COMMAND; do COMMANDS; done` form executes commands until the
 </div><!-- .element: class="fragment" -->
 
 <div>
-With the ` for VAR in ARRAY; do COMMANDS; done` form, you can iterate
-over elements
-</div><!-- .element: class="fragment" -->
+Closely related is `until COMMAND; do COMMANDS; done` form executing
+until `COMMAND` returns successfully
 <div>
   ```bash
-  # compile all the c files in a directory into binaries
+  #!/bin/bash
+  COUNTER=20
+  until [  $COUNTER -lt 10 ]; do
+      echo COUNTER $COUNTER
+      let COUNTER-=1
+  done
+  ```
+</div><!-- .element: class="fragment" -->
+</div><!-- .element: class="fragment" -->
+
+Note:
+- Note the missing $
+
+===
+Iterating
+------------------------------------------------------------------------
+With the ` for VAR in ARRAY; do COMMANDS; done` form, you can iterate
+over elements
+<div>
+  ```bash
+  # compile all the c files in a directory into object files
   for f in *.c; do
     gcc -o ${f%.c} $f
   done
   ```
 </div><!-- .element: class="fragment" -->
+<div>
+  The `for` iteration is the <mark>bread and butter tool</mark> <br>
+  to handle multiple files
+</div><!-- .element: class="fragment" -->
+<div>
+  ```bash
+  function gosam-helicities () {
+    for i in $(eval echo "helicity{$1..$2}") ; do
+      echo $i ; cd $i ; make ; cd ..
+    done
+  }
+  ```
+</div><!-- .element: class="fragment" -->
 
-Note:
-- Note the missing $
+===
+Iteration excercises
+------------------------------------------------------------------------
+Write a function that
+
+- renames all files with a given ending (1st argument, like `txt`) to
+  another ending (2nd argument) <br><br>
+  <div>
+  ```bash
+  function ft-renamer () {
+    for file in *.$1; do mv "$file" "${file%.$1}.$2"; done
+  }
+  ```
+  </div><!-- .element: class="fragment" -->
+
+===
+Iteration excercises
+------------------------------------------------------------------------
+- renames all files containing a string (1st argument, like `txt`) to
+  a name where the 1st string is replace by another one (2nd argument)
+  using `${var/Pattern/Replacement}`
+  <div>
+  ```bash
+  function replace-by () {
+    for file in *$1*; do mv $file ${file/$1/$2}; done
+  }
+  ```
+  </div><!-- .element: class="fragment" -->
+
+<div>
+- shows the number of files in each subfolder
+</div><!-- .element: class="fragment" -->
+  <div>
+  ```bash
+  function show-nr-of-files () {
+    for i in */ ; do echo "$i : `find $i  -type f | wc -l`" ; done
+  }
+  ```
+  </div><!-- .element: class="fragment" -->
 
 ===
 More on arrays
