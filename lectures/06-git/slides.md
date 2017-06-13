@@ -16,17 +16,13 @@ Note:
 ---
 Session overview
 ------------------------------------------------------------------------
-1. Intro, Linux basics
-2. File management in the terminal
-3. Combine simple commands
-4. One liners (going beyond pipes)
-5. Regular Expressions
-6. Bash scripting
-7. Makefiles
-8. <mark>Git</mark>
-9. DESY IT (Sven Sternberger)
-10. Bonus: Tips and Tricks for Customization
-Note:
+1. Intro, Linux basics and file management
+2. More commands and piping
+3. Bash scripting
+4. Regular Expressions
+5. Makefiles
+6. <mark>Git</mark>
+7. DESY IT (Sven Sternberger)
 
 ---
 Why do we need version control?
