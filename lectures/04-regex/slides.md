@@ -42,21 +42,21 @@ Can be used in
 - databases
 - ...
 
-Often similar syntax with notable differences
+Often <mark>similar syntax</mark> with <mark>notable differences</mark>
 
 ===
 The greps
 ------------------------------------------------------------------------
-FYI: grep = global/regular expression/print
+FYI: `grep` = global/regular expression/print
 
-- Standard `grep` understand basic regular expressions
+- Standard `grep` understands basic regular expressions
 - `egrep/grep -E` interprets extended regular expressions
 - `grep -P` uses Perl-compatible regular expressions (PCRE)
 
 PCRE is also seen in some other tools
 
 ---
-Technical side note
+Technical prequesites
 ------------------------------------------------------------------------
 Make sure you have color in grepping
 
@@ -64,12 +64,16 @@ Put in your `.bashrc` or running terminal
 ```bash
   export GREP_OPTIONS='--color=auto'
 ```
+or
+```bash
+  alias grep='grep --color'
+```
 
 ===
 Basic grep examples
 ------------------------------------------------------------------------
 Let's say you want to find all the words in `/usr/share/dict/words` that
-contains the letter `a`
+contain the letter `a`
 
 <div>
   ```bash
@@ -140,7 +144,7 @@ character before that and an `o` before that
 If we want to search for an explicit `.`, <br>
 we have to <mark>escape</mark> it with `\ `
   ```bash
-  cat /usr/share/dict/words | grep 'o\.a$'
+  cat /usr/share/dict/words | grep '\.'
   ```
 </div><!-- .element: class="fragment" -->
 
@@ -148,6 +152,17 @@ Note:
 -  (like `yoga`)
 - Either you want to cheat at scrabble or you really want to become a
   rap artist
+
+
+===
+Grepping Excercises
+------------------------------------------------------------------------
+Which words in `/usr/share/dict/american-english` start with `xyle`?
+
+Which words in `/usr/share/dict/american-english` end with `byl`?
+
+Which words in `/usr/share/dict/american-english` end with `yl` and have
+two characters before this ending an `a`?
 
 ===
 Ranges
@@ -210,6 +225,23 @@ Negation with the caret `^` of course also works in custom classes
 
 Logic gets more complicated with negation,<br>
 so use it only when really needed
+
+===
+Regex exercises
+------------------------------------------------------------------------
+Find a regexp that matches
+```bash
+Kauai
+Kilauea
+Louie
+Montesquieu
+onomatopoeia
+pharmacopoeia
+queue
+sequoia
+```
+
+Which words start with `footw` but do not continue with `o`?
 
 ===
 Word boundaries
@@ -330,3 +362,11 @@ can use them in the replacement as <mark>back reference</mark>
   cat /proc/cpuinfo | grep 'cpu MHz' | sed 's/^.*\( [0-9]\+\.[0-9]\+\)/\1/'
   ```
 </div><!-- .element: class="fragment" -->
+
+
+---
+Summary
+------------------------------------------------------------------------
+- Regexp as tool for searching specific sets of characters
+- Classes and groups of characters
+- Quantifiers and greedyness
