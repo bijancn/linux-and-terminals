@@ -8,7 +8,7 @@ From Zero to Hero <!-- .element: class="fragment" -->
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 <img src="images/code-ninja.jpg" width="200"> <!-- .element: class="fragment" -->
 
-June 13, 2017
+July 17, 2017
 
 Note:
 - Welcome everyone
