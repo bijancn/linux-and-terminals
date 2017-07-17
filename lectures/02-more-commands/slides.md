@@ -99,6 +99,15 @@ Comes from the <mark>UNIX philosophy</mark> (Bell System Technical Journal, 1978
 >  Expect the output of every program to become the input to another, as
 >  yet unknown, program
 
+===
+Mini exercise
+------------------------------------------------------------------------
+- Redirect the output of `ls` to a file called `listing`
+- Confirm that it worked by inspecting `listing` <br>with `cat` or `less`
+- Attach to the `listing` file the output of `ls` again
+- Confirm that it worked by inspecting `listing` <br>with `cat` or `less`
+- Redirect the error message of `rm choochooo` to `/dev/null`
+
 ---
 More tools
 ------------------------------------------------------------------------
@@ -227,6 +236,19 @@ You can also give it the format it should use
     # Mon Jun 12 19:14:23 UTC 2017
   ```
 </div><!-- .element: class="fragment" -->
+
+===
+Mini exercise
+------------------------------------------------------------------------
+You can put the result of a command in a variable with backticks (\`)
+```bash
+foo=bijan
+echo $foo
+foo=`echo bijan`
+echo $foo
+```
+- Modify the `PS1` in your `.zshrc` to include the output of `date` in
+  your favorite format (Check `man date` for formatting information)
 
 ---
 Clip and cut
@@ -362,6 +384,16 @@ as the best compression rates
 <div>
   <img src="images/tar_2x.png" width="60%">
 </div><!-- .element: class="fragment" -->
+
+===
+Mini exercise
+------------------------------------------------------------------------
+- Create an archive of the folder with <br>
+  the trees and cars from previously
+- Rename the folder as `backup`
+- Extract the archive
+- Verify that all files and directories in `backup` and the extracted
+  folder are identical with `diff`
 
 ---
 Basic searching
