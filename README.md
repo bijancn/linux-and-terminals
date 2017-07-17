@@ -33,5 +33,6 @@ and use the following controls:
 
 ### Further links
 - The [lecture slides](./lectures)
+- Our [chat room](https://public.etherpad-mozilla.org/p/Linux-and-Terminals-DESY-2017-07) where you can share infos
 - The [lecture slides from the course on
     2017-06-13](./lectures_2017-06-13)
