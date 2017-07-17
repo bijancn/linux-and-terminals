@@ -31,7 +31,23 @@ and use the following controls:
 - `CTRL-A CTRL-A` (this time, you want `CTRL` also for the second `A`)
   switch to last opened window (doesn't switch between splits)
 
+### Editors
+You can use `emacs` or `vim` *if you are familiar with them already*.
+They a bit harder to learn and I don't have the time to explain them.
+(It is highly recommended, though, that you learn one of them after the
+course)
+
+There are also easier editors installed: `nano` and `mcedit`. I
+recommend `nano`. Just write as in a notepad and save with `CTRL-O` (its
+also shown in the bottom of the window), then type in the filename and
+confirm with `ENTER`. You can exit with `CTRL-X` (will also ask to save
+changes). You open an existing (or new) file with `nano myfile`.
+
+When you use a graphical interface, you can also use `gedit` or another
+editor you are familiar with.
+
 ### Further links
 - The [lecture slides](./lectures)
+- Our [chat room](https://public.etherpad-mozilla.org/p/Linux-and-Terminals-DESY-2017-07) where you can share infos
 - The [lecture slides from the course on
     2017-06-13](./lectures_2017-06-13)
