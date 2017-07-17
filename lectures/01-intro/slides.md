@@ -276,6 +276,13 @@ often shows something like
   ```
 </div><!-- .element: class="fragment" -->
 
+===
+Mini exercise
+------------------------------------------------------------------------
+- Modify the prompt, so it says:<br> `yourname@linux-tutorial`
+- Confirm that it works
+- Change it back with `source ~/.zshrc` (or `.bashrc`)
+
 ---
 What else can the shell do?
 ------------------------------------------------------------------------
@@ -364,8 +371,8 @@ Sourcing
 Read and execute commands from `filename` argument given to `source`
 <div>
   ```bash
-  source ~/.bashrc
-  . ~/.bashrc
+  source ~/.zshrc
+  . ~/.zshrc
   ```
 </div><!-- .element: class="fragment" -->
 <div>
@@ -376,9 +383,17 @@ be loaded at DESY with
   ```
 </div><!-- .element: class="fragment" -->
 <div>
-  The `.bashrc` is somewhat special as it is *usually* loaded by default
+  The `.zshrc` is somewhat special as it is *usually* loaded by default
   (if not -> modify `.bash_profile` or `.profile`)
 </div><!-- .element: class="fragment" -->
+
+===
+Mini exercise
+------------------------------------------------------------------------
+- Add an alias to your `.zshrc` that binds `l` to `ls`
+- Source the changed `.zshrc`
+- Confirm that it works
+- Add more cool aliases that you like ;)
 
 ===
 Some basic directory movements
@@ -522,6 +537,23 @@ We can `l`i`s`t the directory contents
 </div><!-- .element: class="fragment" -->
 
 ===
+Mini exercise
+------------------------------------------------------------------------
+- Create the following folder and file structure <br> <br>
+
+```bash
+  test_folder
+  ├── trees
+  |   ├── larch.img
+  |   ├── pine.img
+  |   └── oak.img
+  ├── cars
+  |   ├── porsche.img
+  |   └── lamborghini.img
+  └── me.img
+```
+
+===
 Showing content
 ------------------------------------------------------------------------
 `cat` concatenates files and prints them on the terminal
@@ -573,8 +605,8 @@ Like `cp` and `mv`, we `ln` from `SOURCE` to `TARGET`
 Can be useful to e.g. keep configuration files<br>
 in a synched folder
   ```bash
-  ls -la ~/.bashrc
-  lrwxrwxrwx 1 bijancn bijancn 35 Jan 31 08:51 /home/bijancn/.bashrc -> /home/bijancn/bcn_scripts/.bashrc
+  ls -la ~/.zshrc
+  lrwxrwxrwx 1 bijancn bijancn 35 Jan 31 08:51 /home/bijancn/.zshrc -> /home/bijancn/bcn_scripts/.zshrc
   ```
 </div><!-- .element: class="fragment" -->
 <div>
@@ -634,6 +666,13 @@ Any file that has the e`x`ecutable bit can be executed
   ./super-lister
   ```
 </div><!-- .element: class="fragment" -->
+
+===
+Mini exercise
+------------------------------------------------------------------------
+- Create a file that runs `echo hello`
+- Make it executable
+- Execute it
 
 ===
 Folders can be special
@@ -775,7 +814,7 @@ use
 </div><!-- .element: class="fragment" -->
 
 <div>
-  Source it with your `.bashrc`, by adding
+  Source it with your `.zshrc`, by adding
   ```bash
   export PATH=$HOME/install/bin:$PATH
   export LD_LIBRARY_PATH=$HOME/install/lib:$PATH
@@ -786,12 +825,14 @@ use
 ===
 Exercise PATHing
 ------------------------------------------------------------------------
-- Create two folders `foo` and `foo2`
-- Put in each folder an executable file `script` that <br>
-  echoes `foo` and `foo2`, respectively
-- Go back and adapt your `$PATH` so that <br>
-  you can execute `script` and it echoes `foo`
-- Change `$PATH` to execute the other `script`
+- Create two folders `bar` and `barbar`
+- Create an executable file called `foo` in `bar` that echoes `bar`
+- Create an executable file called `foo` in `barbar` that echoes `barbar`
+- Go back to your home folder and **prepend** your `bar` folder to
+  `$PATH`
+- Confirm that you can call `foo` as a command now
+- Prepend the `barbar` folder to your `$PATH` such that `foo` returns
+  `barbar`
 
 ===
 Other possibly important variables
