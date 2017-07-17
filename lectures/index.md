@@ -1,0 +1,6 @@
+1. [Intro](./01-intro)
+2. [More commands](./02-more-commands)
+3. [Bash scripting](./03-bash-scripting)
+4. [Regex](./04-regex)
+5. [Makefiles](./05-makefiles)
+6. [Git](./06-git)

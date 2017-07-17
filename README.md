@@ -1,5 +1,6 @@
 # Linux and terminals
 ## From Zero to Hero - Lectures and Exercises
+### Startup instructions
 
 To setup the environment, please login with xterm (or in a terminal in
 one of the graphic interfaces) and enter these commands
@@ -29,3 +30,8 @@ and use the following controls:
 - `ALT-RightArrow` Go to next right split
 - `CTRL-A CTRL-A` (this time, you want `CTRL` also for the second `A`)
   switch to last opened window (doesn't switch between splits)
+
+### Further links
+- The [lecture slides](./lectures)
+- The [lecture slides from the course on
+    2017-06-13](./lectures_2017-06-13)
