@@ -15,12 +15,12 @@ alias x='exit'
 EOF
 cp .bashrc .zshrc
 if [[ $SHELL == *zsh* ]]; then
-cat > .zshrc << EOF
+cat >> .zshrc << EOF
 export PS1=$'\e[00;34m %n \e[00;36m@\e[01;31m %M :\e[01;34m %~ \e[00m \n $ '
 EOF
   printf "Looks like you are using ZSH! Please execute\nsource .zshrc\n"
 else
-cat > .zshrc << EOF
+cat >> .zshrc << EOF
 export PS1='\[\e[00;34m\]\u\[\e[00;36m\] @ \[\e[01;31m\]\h :\[\e[01;34m\] \w \[\e[00m\]\n $ '
 EOF
   printf "Looks like you are using BASH Please execute\nsource .bashrc\n"
