@@ -18,10 +18,10 @@ if [[ $SHELL == *zsh* ]]; then
 cat > .zshrc << EOF
 export PS1=$'\e[00;34m %n \e[00;36m@\e[01;31m %M :\e[01;34m %~ \e[00m \n $ '
 EOF
-  echo "Looks like you are using ZSH! Please execute\nsource .zshrc"
+  printf "Looks like you are using ZSH! Please execute\nsource .zshrc\n"
 else
 cat > .zshrc << EOF
 export PS1='\[\e[00;34m\]\u\[\e[00;36m\] @ \[\e[01;31m\]\h :\[\e[01;34m\] \w \[\e[00m\]\n $ '
 EOF
-  echo "Looks like you are using BASH Please execute\nsource .bashrc"
+  printf "Looks like you are using BASH Please execute\nsource .bashrc\n"
 fi

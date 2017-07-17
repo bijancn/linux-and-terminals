@@ -46,6 +46,14 @@ changes). You open an existing (or new) file with `nano myfile`.
 When you use a graphical interface, you can also use `gedit` or another
 editor you are familiar with.
 
+### Shortcuts
+You can copy and paste by selecting and pressing the middle mouse
+button. On the terminals that run in a graphical login, you can also use
+`CTRL-SHIFT-C` and `CTRL-SHIFT-V` to copy to the `X` clipboard (it is a
+different one than from pure selection).
+
+Always complete commands and filenames with `TAB`.
+
 ### Further links
 - The [lecture slides](./lectures)
 - Our [chat room](https://public.etherpad-mozilla.org/p/Linux-and-Terminals-DESY-2017-07) where you can share infos
