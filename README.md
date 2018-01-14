@@ -33,7 +33,7 @@ and use the following controls:
 
 ### Editors
 You can use `emacs` or `vim` *if you are familiar with them already*.
-They a bit harder to learn and I don't have the time to explain them.
+They are a bit harder to learn and I don't have the time to explain them.
 (It is highly recommended, though, that you learn one of them after the
 course)
 
@@ -56,6 +56,6 @@ Always complete commands and filenames with `TAB`.
 
 ### Further links
 - The [lecture slides](./lectures)
-- Our [chat room](https://public.etherpad-mozilla.org/p/Linux-and-Terminals-DESY-2017-07) where you can share infos
-- The [lecture slides from the course on
-    2017-06-13](./lectures_2017-06-13)
+- Our [chat room](https://public.etherpad-mozilla.org/p/Linux-and-Terminals-DESY-2018-01) where you can share infos
+- The [lecture slides from the course on 2017-07-17](./lectures_2017-07-17)
+- The [lecture slides from the course on 2017-06-13](./lectures_2017-06-13)
